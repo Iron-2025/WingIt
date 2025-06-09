@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Complete Your Purchase</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f9fafb;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .checkout-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 1000px;
+            overflow: hidden;
+        }
+
+        .checkout-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .checkout-title h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 0.25rem;
+        }
+
+        .checkout-title p {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6b7280;
+            padding: 0.5rem;
+            border-radius: 6px;
+            transition: background-color 0.2s;
+        }
+
+        .close-btn:hover {
+            background-color: #f3f4f6;
+        }
+
+        .checkout-content {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            border-right: 1px solid #f3f4f6;
+        }
+
+        .order-summary {
+            width: 100%;
+            padding: 2rem;
+            background-color: #f9fafb;
+        }
+
+        /* Progress Steps */
+        .progress-steps {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            max-width: 400px;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+        }
+
+        .step-circle {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+
+        .step-circle.active {
+            background-color: #3b82f6;
+            color: white;
+        }
+
+        .step-circle.completed {
+            background-color: #10b981;
+            color: white;
+        }
+
+        .step-circle.inactive {
+            background-color: #e5e7eb;
+            color: #6b7280;
+        }
+
+        .step-arrow {
+            margin: 0 1rem;
+            color: #6b7280;
+        }
+
+        /* Form Styles */
+        .form-section {
+            margin-bottom: 2rem;
+        }
+
+        .form-section h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #111827;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-input.error {
+            border-color: #ef4444;
+        }
+
+        .error-message {
+            color: #ef4444;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Button Styles */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background-color: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2563eb;
+        }
+
+        .btn-primary:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        /* Payment Methods */
+        .payment-tabs {
+            display: flex;
+            background-color: #f3f4f6;
+            border-radius: 6px;
+            padding: 0.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .payment-tab {
+            flex: 1;
+            padding: 0.75rem;
+            background: none;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #6b7280;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .payment-tab.active {
+            background-color: white;
+            color: #111827;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .payment-content {
+            display: none;
+        }
+
+        .payment-content.active {
+            display: block;
+        }
+
+        /* QR Code Payment */
+        .qr-payment {
+            text-align: center;
+            padding: 2rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+        }
+
+        .qr-logo {
+            width: 4rem;
+            height: 4rem;
+            background-color: #3b82f6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            color: white;
+            font-weight: bold;
+        }
+
+        .qr-code {
+            width: 200px;
+            height: 200px;
+            border: 2px solid #3b82f6;
+            border-radius: 8px;
+            margin: 1rem auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f8fafc;
+            color: #6b7280;
+        }
+
+        .qr-instructions {
+            margin-top: 1rem;
+            text-align: left;
+        }
+
+        .qr-instructions p {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 0.25rem;
+        }
+
+        /* Credit Card Form */
+        .card-form {
+            space-y: 1rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        /* Order Summary */
+        .order-summary h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #111827;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .item-details h4 {
+            font-weight: 500;
+            color: #111827;
+        }
+
+        .item-details p {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .item-price {
+            font-weight: 500;
+            color: #111827;
+        }
+
+        .order-divider {
+            border: none;
+            border-top: 1px solid #e5e7eb;
+            margin: 1rem 0;
+        }
+
+        .order-total {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+            font-size: 1.125rem;
+            color: #111827;
+        }
+
+        /* Success Page */
+        .success-content {
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        .success-icon {
+            width: 4rem;
+            height: 4rem;
+            background-color: #dcfce7;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            color: #16a34a;
+            font-size: 2rem;
+        }
+
+        .success-content h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #111827;
+        }
+
+        .success-content p {
+            color: #6b7280;
+            margin-bottom: 1rem;
+        }
+
+        .order-number {
+            font-weight: 500;
+            color: #111827;
+            margin-bottom: 2rem;
+        }
+
+        /* Hidden class */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Responsive Design */
+        @media (min-width: 768px) {
+            .checkout-content {
+                flex-direction: row;
+            }
+
+            .main-content {
+                flex: 1;
+            }
+
+            .order-summary {
+                width: 320px;
+            }
+
+            .progress-steps {
+                max-width: none;
+            }
+
+            .step-arrow {
+                display: block;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .step-arrow {
+                display: none;
+            }
+
+            .progress-steps {
+                justify-content: center;
+                gap: 1rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="checkout-container">
+        <div class="checkout-header">
+            <div class="checkout-title">
+                <h1>Checkout</h1>
+                <p>Complete your purchase</p>
+            </div>
+            <button class="close-btn" onclick="closeCheckout()">&times;</button>
+        </div>
+
+        <div class="checkout-content">
+            <div class="main-content">
+                <!-- Progress Steps -->
+                <div class="progress-steps">
+                    <div class="step">
+                        <div class="step-circle active" id="step1-circle">1</div>
+                        <span>Information</span>
+                    </div>
+                    <div class="step-arrow">→</div>
+                    <div class="step">
+                        <div class="step-circle inactive" id="step2-circle">2</div>
+                        <span>Payment</span>
+                    </div>
+                    <div class="step-arrow">→</div>
+                    <div class="step">
+                        <div class="step-circle inactive" id="step3-circle">3</div>
+                        <span>Confirmation</span>
+                    </div>
+                </div>
+
+                <!-- Step 1: Information -->
+                <div id="step-information" class="step-content">
+                    <div class="form-section">
+                        <h2>Contact Information</h2>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="fullName">Full Name</label>
+                            <input type="text" id="fullName" class="form-input" placeholder="Enter your full name">
+                            <div class="error-message" id="fullName-error"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="mobileNumber">Mobile Number</label>
+                            <input type="tel" id="mobileNumber" class="form-input" placeholder="Enter your mobile number">
+                            <div class="error-message" id="mobileNumber-error"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="email">Email (Optional)</label>
+                            <input type="email" id="email" class="form-input" placeholder="Enter your email address">
+                            <div class="error-message" id="email-error"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="address">Delivery Address</label>
+                            <input type="text" id="address" class="form-input" placeholder="Enter your delivery address">
+                            <div class="error-message" id="address-error"></div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="goToPayment()">Continue to Payment</button>
+                </div>
+
+                <!-- Step 2: Payment -->
+                <div id="step-payment" class="step-content hidden">
+                    <div class="form-section">
+                        <h2>Payment Method</h2>
+
+                        <div class="payment-tabs">
+                            <button class="payment-tab active" onclick="switchPaymentMethod('qr')">
+                                📱 QR Code
+                            </button>
+                            <button class="payment-tab" onclick="switchPaymentMethod('card')">
+                                💳 Credit Card
+                            </button>
+                        </div>
+
+                        <!-- QR Code Payment -->
+                        <div id="qr-payment" class="payment-content active">
+                            <div class="qr-payment">
+                                <div class="qr-logo">G</div>
+                                <h3>GCash</h3>
+                                <p style="color: #6b7280; margin: 1rem 0;">Use your GCash app to scan the QR code below</p>
+                                
+                                <div class="qr-code">
+                                    QR Code Here
+                                </div>
+                                
+                                <p style="font-size: 0.75rem; color: #6b7280;">Transfer fees may apply</p>
+                                
+                                <div class="qr-instructions">
+                                    <p>1. Open your GCash app</p>
+                                    <p>2. Tap on "Scan QR" and scan the code above</p>
+                                    <p>3. Confirm the payment amount</p>
+                                    <p>4. Complete the payment in your app</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Credit Card Payment -->
+                        <div id="card-payment" class="payment-content">
+                            <div class="card-form">
+                                <div class="form-group">
+                                    <label class="form-label" for="cardNumber">💳 Card Number</label>
+                                    <input type="text" id="cardNumber" class="form-input" placeholder="1234 5678 9012 3456" maxlength="19">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="cardHolder">Card Holder Name</label>
+                                    <input type="text" id="cardHolder" class="form-input" placeholder="John Doe">
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label" for="expiryDate">📅 Expiry Date</label>
+                                        <input type="text" id="expiryDate" class="form-input" placeholder="MM/YY" maxlength="5">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="cvv">🔒 CVV</label>
+                                        <input type="password" id="cvv" class="form-input" placeholder="123" maxlength="4">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="completePayment()">Complete Payment</button>
+                </div>
+
+                <!-- Step 3: Confirmation -->
+                <div id="step-confirmation" class="step-content hidden">
+                    <div class="success-content">
+                        <div class="success-icon">✓</div>
+                        <h2>Payment Successful!</h2>
+                        <p>Thank you for your purchase. Your order has been confirmed.</p>
+                        <p class="order-number">Order #: <span id="orderNumber"></span></p>
+                        <button class="btn btn-primary" onclick="continueShopping()">Continue Shopping</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="order-summary">
+                <h2>Order Summary</h2>
+
+                <div class="order-item">
+                    <div class="item-details">
+                        <h4>Product 1</h4>
+                        <p>Qty: 1</p>
+                    </div>
+                    <div class="item-price">₱49.00</div>
+                </div>
+
+                <div class="order-item">
+                    <div class="item-details">
+                        <h4>Product 2</h4>
+                        <p>Qty: 1</p>
+                    </div>
+                    <div class="item-price">₱30.00</div>
+                </div>
+
+                <hr class="order-divider">
+
+                <div class="order-item">
+                    <span style="color: #6b7280;">Subtotal</span>
+                    <span>₱79.00</span>
+                </div>
+
+                <div class="order-item">
+                    <span style="color: #6b7280;">Shipping</span>
+                    <span>Free</span>
+                </div>
+
+                <hr class="order-divider">
+
+                <div class="order-total">
+                    <span>Total</span>
+                    <span>₱79.00</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+
+        function updateStepIndicators() {
+            // Reset all circles
+            document.getElementById('step1-circle').className = 'step-circle inactive';
+            document.getElementById('step2-circle').className = 'step-circle inactive';
+            document.getElementById('step3-circle').className = 'step-circle inactive';
+
+            // Update based on current step
+            if (currentStep >= 1) {
+                document.getElementById('step1-circle').className = currentStep === 1 ? 'step-circle active' : 'step-circle completed';
+                document.getElementById('step1-circle').textContent = currentStep === 1 ? '1' : '✓';
+            }
+            if (currentStep >= 2) {
+                document.getElementById('step2-circle').className = currentStep === 2 ? 'step-circle active' : 'step-circle completed';
+                document.getElementById('step2-circle').textContent = currentStep === 2 ? '2' : '✓';
+            }
+            if (currentStep >= 3) {
+                document.getElementById('step3-circle').className = 'step-circle active';
+                document.getElementById('step3-circle').textContent = '3';
+            }
+        }
+
+        function showStep(step) {
+            // Hide all steps
+            document.getElementById('step-information').classList.add('hidden');
+            document.getElementById('step-payment').classList.add('hidden');
+            document.getElementById('step-confirmation').classList.add('hidden');
+
+            // Show current step
+            document.getElementById(`step-${step}`).classList.remove('hidden');
+        }
+
+        function validateForm() {
+            let isValid = true;
+            const errors = {};
+
+            // Clear previous errors
+            document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+            document.querySelectorAll('.form-input').forEach(el => el.classList.remove('error'));
+
+            // Validate full name
+            const fullName = document.getElementById('fullName').value.trim();
+            if (!fullName) {
+                errors.fullName = 'Full name is required';
+                isValid = false;
+            }
+
+            // Validate mobile number
+            const mobileNumber = document.getElementById('mobileNumber').value.trim();
+            if (!mobileNumber) {
+                errors.mobileNumber = 'Mobile number is required';
+                isValid = false;
+            } else if (!/^\d{10,11}$/.test(mobileNumber)) {
+                errors.mobileNumber = 'Please enter a valid mobile number';
+                isValid = false;
+            }
+
+            // Validate email (optional)
+            const email = document.getElementById('email').value.trim();
+            if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                errors.email = 'Please enter a valid email address';
+                isValid = false;
+            }
+
+            // Validate address
+            const address = document.getElementById('address').value.trim();
+            if (!address) {
+                errors.address = 'Delivery address is required';
+                isValid = false;
+            }
+
+            // Display errors
+            Object.keys(errors).forEach(field => {
+                document.getElementById(`${field}-error`).textContent = errors[field];
+                document.getElementById(field).classList.add('error');
+            });
+
+            return isValid;
+        }
+
+        function goToPayment() {
+            if (validateForm()) {
+                currentStep = 2;
+                showStep('payment');
+                updateStepIndicators();
+            }
+        }
+
+        function completePayment() {
+            currentStep = 3;
+            showStep('confirmation');
+            updateStepIndicators();
+            
+            // Generate random order number
+            const orderNumber = 'ORD-' + Math.floor(100000 + Math.random() * 900000);
+            document.getElementById('orderNumber').textContent = orderNumber;
+        }
+
+        function switchPaymentMethod(method) {
+            // Update tab buttons
+            document.querySelectorAll('.payment-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Update content
+            document.querySelectorAll('.payment-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(`${method}-payment`).classList.add('active');
+        }
+
+        function closeCheckout() {
+            alert('Checkout closed');
+        }
+
+        function continueShopping() {
+            alert('Redirecting to shop...');
+        }
+
+        // Format card number input
+        document.getElementById('cardNumber').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\s/g, '');
+            let formattedValue = value.replace(/(\d{4})/g, '$1 ').trim();
+            e.target.value = formattedValue;
+        });
+
+        // Format expiry date input
+        document.getElementById('expiryDate').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 2) {
+                value = value.slice(0, 2) + '/' + value.slice(2, 4);
+            }
+            e.target.value = value;
+        });
+
+        // Initialize
+        updateStepIndicators();
+    </script>
+</body>
+</html>
