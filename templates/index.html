@@ -860,6 +860,9 @@
                     <strong>Total: PHP <span id="cartTotalAmount">0.00</span></strong>
                 </div>
                 <form id="checkoutForm">
+                    <div id="cartItemsCheckoutContainer">
+                        <!-- Cart items for checkout will be populated by JavaScript -->
+                    </div>
                     <input type="text" id="fullName" placeholder="Full Name" required>
                     <input type="text" id="mobileNumber" placeholder="Mobile Number" required>
                     <input type="email" id="email" placeholder="Email (Optional)">
@@ -931,7 +934,9 @@
             const cartTotalAmount = document.getElementById('cartTotalAmount');
             const checkoutForm = document.getElementById('checkoutForm');
 
-            if (cartButton) cartButton.addEventListener('click', toggleCart);
+            if (cartButton) cartButton.addEventListener('click', () => {
+                window.location.href = '/checkout';
+            });
             if (closeCartButton) closeCartButton.addEventListener('click', toggleCart);
             if (checkoutForm) checkoutForm.addEventListener('submit', handleCheckout);
 
@@ -1117,11 +1122,15 @@
 
                 const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
                 cartCountBadge.textContent = totalItems;
+                
+                const cartItemsCheckoutContainer = document.getElementById('cartItemsCheckoutContainer');
+
 
                 if (cart.length === 0) {
                     cartItemsContainer.innerHTML = '<p style="text-align:center; color: var(--text-secondary);">Your cart is empty</p>';
+                    if(cartItemsCheckoutContainer) cartItemsCheckoutContainer.innerHTML = '';
                 } else {
-                    cartItemsContainer.innerHTML = cart.map(item => `
+                    const cartHTML = cart.map(item => `
                         <div class="cart-item" style="display:flex; justify-content:space-between; align-items:center; padding: 0.5rem 0; border-bottom: 1px solid var(--border-color);">
                             <div class="cart-item-info" style="flex-grow:1;">
                                 <h4 style="font-size:0.9rem; margin-bottom:0.25rem;">${item.name}</h4>
@@ -1135,6 +1144,8 @@
                             </div>
                         </div>
                     `).join('');
+                    cartItemsContainer.innerHTML = cartHTML;
+                    if(cartItemsCheckoutContainer) cartItemsCheckoutContainer.innerHTML = cartHTML;
                 }
                 const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
                 cartTotalAmount.textContent = total.toFixed(2);
@@ -1144,9 +1155,7 @@
             window.removeFromCart = removeFromCart; // Make it globally accessible for inline onclick
 
             function toggleCart() {
-                if (cartOverlay) {
-                    cartOverlay.classList.toggle('active');
-                }
+                window.location.href = '/checkout';
             }
 
             function saveCart() {

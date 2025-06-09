@@ -25,6 +25,10 @@ def admin_login():
 def admin_dashboard():
     return render_template('admin-dashboard.html')
 
+@app.route('/checkout')
+def checkout():
+    return render_template('checkout.html')
+
 @app.route('/api/products', methods=['GET', 'POST'])
 def handle_products():
     conn = get_db_connection()

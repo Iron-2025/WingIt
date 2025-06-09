@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wing-It - Checkout</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+        :root {
+            --brand-orange: #ff6b35;
+            --brand-yellow: #f7931e;
+            --brand-red: #e74c3c;
+            --text-primary: #1a202c;
+            --text-secondary: #718096;
+            --background: #f9fafb;
+            --border-color: #e2e8f0;
+        }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background-color: var(--background);
+        }
+        .checkout-container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .checkout-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .checkout-title h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .checkout-content {
+            display: flex;
+            flex-direction: column;
+        }
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+        }
+        .order-summary {
+            width: 100%;
+            padding: 2rem;
+            background-color: #f9fafb;
+            border-top: 1px solid var(--border-color);
+        }
+        .form-section h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        .order-divider {
+            border-top: 1px solid var(--border-color);
+            margin: 1rem 0;
+        }
+        .order-total {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+            font-size: 1.125rem;
+        }
+        .qr-payment {
+            text-align: center;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: #fff;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+            width: 100%;
+        }
+        .btn-primary {
+            background: var(--brand-orange);
+            color: white;
+        }
+        .btn-primary:hover {
+            background: var(--brand-red);
+        }
+        .hidden { display: none; }
+
+        @media (min-width: 768px) {
+            .checkout-content {
+                flex-direction: row;
+            }
+            .order-summary {
+                width: 350px;
+                border-top: none;
+                border-left: 1px solid var(--border-color);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="checkout-container">
+        <div class="checkout-header">
+            <div class="checkout-title">
+                <h1>Checkout</h1>
+            </div>
+        </div>
+
+        <div class="checkout-content">
+            <div class="main-content">
+                <div id="step-information">
+                    <div class="form-section">
+                        <h2>Contact Information</h2>
+                        <div class="form-group">
+                            <label class="form-label" for="fullName">Full Name</label>
+                            <input type="text" id="fullName" class="form-input" placeholder="Juan Dela Cruz">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="mobileNumber">Mobile Number</label>
+                            <input type="tel" id="mobileNumber" class="form-input" placeholder="09123456789">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="email">Email (Optional)</label>
+                            <input type="email" id="email" class="form-input" placeholder="juan.delacruz@example.com">
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <h2>Payment</h2>
+                        <div class="qr-payment">
+                            <p style="color: #6b7280; margin-bottom: 1rem;">Scan to pay with GCash</p>
+                            <img src="{{ url_for('static', filename='images/gcash.JPG') }}" alt="QR Code for Payment" style="width: 200px; height: 200px; border-radius: 8px; border: 1px solid var(--border-color);">
+                        </div>
+                        <div class="form-group" style="margin-top: 1rem;">
+                            <label class="form-label" for="referenceCode">Reference Code</label>
+                            <input type="text" id="referenceCode" class="form-input" placeholder="Enter your GCash reference code">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" id="submitOrderBtn">Submit Order</button>
+                </div>
+                <div id="step-confirmation" class="hidden" style="text-align: center; padding: 2rem 0;">
+                    <div style="width: 4rem; height: 4rem; background-color: #dcfce7; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; color: #16a34a; font-size: 2rem;">✓</div>
+                    <h2 style="font-size: 1.5rem; font-weight: 600; margin-bottom: 0.5rem;">Payment Successful!</h2>
+                    <p style="color: #6b7280; margin-bottom: 1rem;">Your order has been confirmed.</p>
+                    <p style="font-weight: 500; margin-bottom: 2rem;">Order #: <span id="orderNumber"></span></p>
+                    <a href="{{ url_for('index') }}" class="btn btn-primary">Continue Shopping</a>
+                </div>
+            </div>
+
+            <div class="order-summary">
+                <h2>Order Summary</h2>
+                <div id="checkoutItemsContainer"></div>
+                <hr class="order-divider">
+                <div class="order-total">
+                    <span>Total</span>
+                    <span id="checkoutTotalAmount">₱0.00</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/checkout.js') }}"></script>
+</body>
+</html>

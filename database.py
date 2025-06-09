@@ -4,6 +4,7 @@ def init_db():
     conn = sqlite3.connect('database.db')
     print("Opened database successfully")
 
+    conn.execute('DROP TABLE IF EXISTS products')
     conn.execute('''
     CREATE TABLE IF NOT EXISTS products (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -11,7 +12,8 @@ def init_db():
         category TEXT NOT NULL,
         price REAL NOT NULL,
         description TEXT,
-        image TEXT
+        image TEXT,
+        is_popular BOOLEAN DEFAULT FALSE
     );
     ''')
     print("Table 'products' created successfully")
@@ -70,14 +72,14 @@ def seed_db():
     print("Seeding database...")
 
     menuItems = [
-        (1, "Margherita Pizza", "pizza", 12.99, "Fresh tomatoes, mozzarella, basil", "/placeholder.svg?height=200&width=300"),
-        (2, "Pepperoni Pizza", "pizza", 14.99, "Pepperoni, mozzarella, tomato sauce", "/placeholder.svg?height=200&width=300"),
-        (3, "Classic Burger", "burger", 9.99, "Beef patty, lettuce, tomato, onion", "/placeholder.svg?height=200&width=300"),
-        (4, "Chicken Burger", "burger", 10.99, "Grilled chicken, lettuce, mayo", "/placeholder.svg?height=200&width=300"),
-        (5, "Caesar Salad", "salad", 8.99, "Romaine lettuce, parmesan, croutons", "/placeholder.svg?height=200&width=300"),
-        (6, "Greek Salad", "salad", 9.99, "Tomatoes, olives, feta cheese", "/placeholder.svg?height=200&width=300"),
-        (7, "Coca Cola", "drink", 2.99, "Refreshing cola drink", "/placeholder.svg?height=200&width=300"),
-        (8, "Orange Juice", "drink", 3.99, "Fresh squeezed orange juice", "/placeholder.svg?height=200&width=300")
+        (1, "Margherita Pizza", "pizza", 12.99, "Fresh tomatoes, mozzarella, basil", "/placeholder.svg?height=200&width=300", False),
+        (2, "Pepperoni Pizza", "pizza", 14.99, "Pepperoni, mozzarella, tomato sauce", "/placeholder.svg?height=200&width=300", True),
+        (3, "Classic Burger", "burger", 9.99, "Beef patty, lettuce, tomato, onion", "/placeholder.svg?height=200&width=300", True),
+        (4, "Chicken Burger", "burger", 10.99, "Grilled chicken, lettuce, mayo", "/placeholder.svg?height=200&width=300", False),
+        (5, "Caesar Salad", "salad", 8.99, "Romaine lettuce, parmesan, croutons", "/placeholder.svg?height=200&width=300", False),
+        (6, "Greek Salad", "salad", 9.99, "Tomatoes, olives, feta cheese", "/placeholder.svg?height=200&width=300", False),
+        (7, "Coca Cola", "drink", 2.99, "Refreshing cola drink", "/placeholder.svg?height=200&width=300", True),
+        (8, "Orange Juice", "drink", 3.99, "Fresh squeezed orange juice", "/placeholder.svg?height=200&width=300", False)
     ]
 
     reviews = [
@@ -88,7 +90,7 @@ def seed_db():
 
     categories = [('pizza',), ('burger',), ('salad',), ('drink',)]
 
-    conn.executemany("INSERT OR IGNORE INTO products (id, name, category, price, description, image) VALUES (?,?,?,?,?,?)", menuItems)
+    conn.executemany("INSERT OR IGNORE INTO products (id, name, category, price, description, image, is_popular) VALUES (?,?,?,?,?,?,?)", menuItems)
     conn.executemany("INSERT OR IGNORE INTO reviews (id, name, rating, text, date, url, image) VALUES (?,?,?,?,?,?,?)", reviews)
     conn.executemany("INSERT OR IGNORE INTO categories (name) VALUES (?)", categories)
 
